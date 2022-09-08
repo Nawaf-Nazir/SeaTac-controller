@@ -18,6 +18,12 @@ X1=Matrix(X1); # converting to matrix
 X2=Matrix(X2);
 U1=Matrix(U1);
 U2=Matrix(U2);
+
+# X1=reverse(X1, dims=1)
+# X2=reverse(X2, dims=1)
+# U1=reverse(U1, dims=1)
+# U2=reverse(U2, dims=1)
+
 Y1=[X1';U1';U2']; # concatenating inputs
 
 JM=Model(Mosek.Optimizer) # defining the JuMP model
@@ -63,3 +69,10 @@ status=optimize!(JM) # solve the optimization problem
 A_value=value.(At)
 A=A_value[:,1:4]; # A matrix
 B=A_value[:,5:8]; # B matrix
+t_value=value.(t); # fit error
+
+# calculating modeling error
+Er=zeros(Float64,11912,4);
+for i=1:11912
+    Er[i,:]=X2[i,:]-A_value*Y1[:,i];
+end
